@@ -1,0 +1,32 @@
+{
+  "name": "angular",
+  "version": "0.0.0",
+  "engines": {
+    "node": "12.4.0",
+    "npm": "6.9.0"
+  },
+  "scripts": {
+    "b": "nodemon ./main.ts",
+    "create-branch": "git branch new-one",
+    "move-to-branch": "git checkout new-one",
+    "move-to-master-branch": "git checkout",
+    "merge-branch-to-master-branch": "git merge new-one",
+    "init": "git init && git remote add origin https://github.com/djm2x/scripte-node-ts.git",
+    "push": "git add . && git commit -m \"change name foler api to node\" && git push -u origin master"
+  },
+  "private": true,
+  "dependencies": {
+    "moment": "^2.24.0",
+    "mssql": "^6.2.0",
+    "mysql": "^2.18.1",
+    "sqlite3": "^4.1.1",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "tslint": "~5.18.0",
+    "@types/node": "^12.11.1",
+    "ts-node": "~8.3.0",
+    "typescript": "~3.7.5"
+  }
+}
