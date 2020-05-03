@@ -1,5 +1,4 @@
-var express = require('express');
-var app = express();
+'use strict'
 var sql = require("mssql");
 var mysql = require('mysql');
 var moment = require("moment");
@@ -76,13 +75,13 @@ async function dbM() {
             '2020-05-01 03:49:25' as created_at,
             '2020-05-01 03:49:25' as updated_at
     from [MEMBRE]
-    where ID_MEMBRE <> 404
+    
     `;
 
     const memberInsert = 'INSERT INTO users (nom, prenom, email, phone, adresse, cin, organisation, password, role, idRegion, remember_token, isActive, date, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
 
     const r2 = 'select * from region'
-    const result = await sql.query(rr)
+    const result = await sql.query(member)
     // console.dir(result.recordset)
     // return;
     const list = result.recordset as any[];
@@ -99,9 +98,9 @@ async function dbM() {
       //   // connected!
       // });
 
-      // db.run(memberInsert, 
-      // [e.nom, e.prenom, e.email, e.phone, e.adresse, e.cin, e.organisation, e.password, e.role
-      //   , e.idRegion ? e.idRegion : 62, e.rememberToken, e.isActive, e.date ? moment(e.date).format('YYYY-MM-DD HH:MM:SS') : moment(new Date(2020, 5, 1)).format('YYYY-MM-DD HH:MM:SS'), e.created_at, e.updated_at]);
+      db.run(memberInsert, 
+      [e.nom, e.prenom, e.email, e.phone, e.adresse, e.cin, e.organisation, e.password, e.role
+        , e.idRegion ? e.idRegion : 62, e.rememberToken, e.isActive, e.date ? moment(e.date).format('YYYY-MM-DD HH:MM:SS') : moment(new Date(2020, 5, 1)).format('YYYY-MM-DD HH:MM:SS'), e.created_at, e.updated_at]);
 
 
 

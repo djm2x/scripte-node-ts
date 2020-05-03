@@ -5,8 +5,15 @@
     "node": "12.4.0",
     "npm": "6.9.0"
   },
+  "config": {
+    "p1": {
+      "p2": "test2"
+    },
+    "p3": "test3"
+  },
   "scripts": {
-    "b": "nodemon ./main.ts",
+    "b0": "nodemon ./main.ts",
+    "b": "set PARAM=5 && nodemon ./script.ts",
     "create-branch": "git branch new-one",
     "move-to-branch": "git checkout new-one",
     "move-to-master-branch": "git checkout",
