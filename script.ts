@@ -49,32 +49,8 @@ async function main() {
 // main();
 // const ts = require('typescript');
 import * as ts from 'typescript';
-let file = fs.readFileSync('./models.ts');
-//
-const program = ts.createProgram(['./models.ts'], {
-  module: ts.ModuleKind.ES2015,
-  moduleResolution: ts.ModuleResolutionKind.NodeJs,
-  target: ts.ScriptTarget.Latest
-});
+import { ClassReader } from 'class-reader';
 
-const typeChecker = program.getTypeChecker();
+const cr = new ClassReader();
 
-
-program.getSourceFiles()
-  .filter(sourceFile => sourceFile.fileName.includes('models'))
-  .forEach(node => {
-    
-    const statements = node.statements.filter(s => ts.isClassDeclaration(s));
-
-    statements.forEach(statement => {
-      const type = typeChecker.getTypeAtLocation(statement);
-
-      console.log(JSON.stringify((statement as any).name.escapedText, null, '\t'));
-
-      for (const property of type.getProperties()) {
-        const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, statement);
-        console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
-      }
-    });
-  })
-
+cr.methode();

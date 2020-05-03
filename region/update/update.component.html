@@ -1,0 +1,32 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    <mat-toolbar role="toolbar" class="task-header">
+      <span>{{title}}</span>
+    </mat-toolbar>
+    <mat-divider></mat-divider>
+  </h1>
+  <div class="content">
+    <div mat-dialog-content>
+
+      <form [formGroup]="myForm">
+        <mat-form-field appearance="fill">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <!-- <app-upload-image nameBtn="region" [folderToSaveInServer]="folderToSaveInServer"
+            [propertyOfParent]="imageTo" [eventSubmitToParent]="imageFrom"
+            [eventSubmitFromParent]="eventSubmitFromParent">
+          </app-upload-image> -->
+      </form>
+
+
+    </div>
+
+    <div class="actions" mat-dialog-actions>
+      <button mat-button (click)="onNoClick()" type="button">Annuler</button>&nbsp;&nbsp;
+      <button mat-raised-button cdkFocusInitial color="primary" (click)="onOkClick(myForm.value)"
+        [disabled]="myForm.invalid">Enregistre</button>
+    </div>
+  </div>
+</div>

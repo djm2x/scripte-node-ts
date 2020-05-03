@@ -1,0 +1,21 @@
+mat-form-field {
+  width: 100%;
+}
+
+.dialog {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  h1 span {
+    padding: 0 5px;
+  }
+
+  .content {
+    padding: 0 20px 25px;
+  }
+
+  .actions {
+    display: flex;
+    // align-content: flex-end;
+    flex-direction: row-reverse;
+  }
+}
