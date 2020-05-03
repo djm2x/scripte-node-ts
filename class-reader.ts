@@ -2,9 +2,7 @@ import * as ts from 'typescript';
 
 export class ClassReader {
 
-  constructor() {
-    this.methode();
-  }
+  constructor() { }
 
   methode() {
     const program = ts.createProgram(['./models.ts'], {

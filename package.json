@@ -2,8 +2,8 @@
   "name": "angular",
   "version": "0.0.0",
   "engines": {
-    "node": "12.4.0",
-    "npm": "6.9.0"
+    "node": "14.1.0",
+    "npm": "6.14.4"
   },
   "config": {
     "p1": {
@@ -13,7 +13,8 @@
   },
   "scripts": {
     "b0": "nodemon ./main.ts",
-    "b": "set PARAM=5 && nodemon ./script.ts",
+    "w": "set PARAM=5 && nodemon --ignore 'generation/*.ts' ./script.ts",
+    "b": "node --require ts-node/register ./script.ts",
     "create-branch": "git branch new-one",
     "move-to-branch": "git checkout new-one",
     "move-to-master-branch": "git checkout",

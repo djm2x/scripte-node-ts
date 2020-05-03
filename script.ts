@@ -15,42 +15,42 @@ const rl = readline.createInterface({
 
 const prompt = (question) => new Promise(res => rl.question(question, r => res(r)))
 
-// const args0 = require('minimist')(process.env)
-// const args = process.env.PARAM;
-// process.env.npm_package_args_p1_p2
-
-
-async function main() {
-  // await prompt('cest dj ? \n')
-  // await prompt('ccccc ? \n')
-  // await prompt('dddddd ? \n')
-  // await prompt('yyyyyy ? \n')
-
-  // const r = fs.readFileSync('./models.ts')
-  // console.log(r)
-  // rl.close();
-
-
-  const serviceA = require('./models.ts');
-  const keys = Object.keys(serviceA);
-  // console.log(Object.keys(serviceA))
-  keys.forEach(e => {
-
-    const f = serviceA[e] as Function
-    console.log(f)
-  })
-
-}
 
 // console.log(process.env.npm_package_args_p1_p2)
 
-
-// launch the programme
-// main();
-// const ts = require('typescript');
-import * as ts from 'typescript';
-import { ClassReader } from 'class-reader';
+import { ClassReader } from './class-reader';
 
 const cr = new ClassReader();
 
-cr.methode();
+// cr.methode();
+const oldName = 'region';
+const newName = 'test';
+const oldCap = oldName.charAt(0).toUpperCase() + oldName.slice(1);
+const newCap = newName.charAt(0).toUpperCase() + newName.slice(1);
+const dir = `./${oldName}`;
+const newdir = `./generation/${newName}`;
+const files = fs.readdirSync(dir);
+
+if (!fs.existsSync(newdir)){
+  fs.mkdirSync(newdir);
+}
+
+// console.log(files)
+files.filter(f => !fs.lstatSync(`${dir}/${f}`).isDirectory()).forEach(file => {
+    const filePath = join(dir, file);
+    // const newFilePath = join(newDir, newDir);
+
+    // const i = file.indexOf('-') !== -1 ? file.indexOf('-') : file.indexOf('.');
+    var content = fs.readFileSync(`${dir}/${file}`, 'utf8');
+
+    let newContent = content.replace(new RegExp(oldName, 'g'), newName);
+    newContent = newContent.replace(new RegExp(oldCap, 'g'), newCap);
+    // console.log(oldName, newName, oldCap, newCap)
+    const fileName = file.replace(oldName, newName);
+    // console.log(fileName, content.substring(0, 20))
+
+    fs.writeFileSync(`${newdir}/${fileName}`, newContent)
+    // fs.renameSync(filePath, newFilePath);
+  });
+
+  console.log('done')
