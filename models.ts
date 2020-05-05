@@ -3,7 +3,7 @@ export class User {
     name = '';
     date = new Date();
     isActive = false;
-
+    idRole = 0;
     role = new Role();
 }
 

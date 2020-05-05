@@ -20,16 +20,7 @@ export class RegionComponent implements OnInit {
   isRateLimitReached = false;
 
   dataSource = [];
-  columnDefs = [
-    { columnDef: 'name', headName: '' },
-    // { columnDef: 'destination', headName: '' },
-    { columnDef: 'option', headName: 'OPTION' },
-  ].map(e => {
-    e.headName = e.headName === '' ? e.columnDef.toUpperCase() : e.headName;
-    return e;
-  });
-
-  displayedColumns = this.columnDefs.map(e => e.columnDef);
+  displayedColumns = [/*{columnDefs}*/];
 
   constructor(private uow: UowService, public dialog: MatDialog, private mydialog: DeleteService, ) { }
 

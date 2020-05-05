@@ -9,15 +9,7 @@
     <div mat-dialog-content>
 
       <form [formGroup]="myForm">
-        <mat-form-field appearance="fill">
-          <mat-label>Nom</mat-label>
-          <input matInput formControlName="name" required>
-        </mat-form-field>
-
-        <!-- <app-upload-image nameBtn="region" [folderToSaveInServer]="folderToSaveInServer"
-            [propertyOfParent]="imageTo" [eventSubmitToParent]="imageFrom"
-            [eventSubmitFromParent]="eventSubmitFromParent">
-          </app-upload-image> -->
+        {formFields}
       </form>
 
 

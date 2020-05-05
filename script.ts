@@ -3,6 +3,7 @@ import { join } from 'path';
 import * as readline from 'readline';
 import * as fs from 'fs';
 import * as url from 'url';
+import { Generate } from './generate';
 
 const FILE = `file://${join(__dirname, 'angular/index.html')}`;
 
@@ -15,42 +16,33 @@ const rl = readline.createInterface({
 
 const prompt = (question) => new Promise(res => rl.question(question, r => res(r)))
 
+const g = new Generate();
 
+// g.methode();
 // console.log(process.env.npm_package_args_p1_p2)
 
-import { ClassReader } from './class-reader';
+// function myFirstCallBack(x: number, y: number, callback: (s: number) => void) {
+//   return callback(x+y);
+// }
 
-const cr = new ClassReader();
+// myFirstCallBack(5, 6, (e) => {
+//   console.log(e);
+// })
+const convert = (from, to) => str => Buffer.from(str, from).toString(to)
+const utf8ToHex = convert('utf8', 'hex')
+const hexToUtf8 = convert('hex', 'utf8')
 
-// cr.methode();
-const oldName = 'region';
-const newName = 'test';
-const oldCap = oldName.charAt(0).toUpperCase() + oldName.slice(1);
-const newCap = newName.charAt(0).toUpperCase() + newName.slice(1);
-const dir = `./${oldName}`;
-const newdir = `./generation/${newName}`;
-const files = fs.readdirSync(dir);
-
-if (!fs.existsSync(newdir)){
-  fs.mkdirSync(newdir);
+function stringToHex(str)
+{
+    const buf = Buffer.from(str, 'utf8');
+    return buf.toString('hex');
 }
 
-// console.log(files)
-files.filter(f => !fs.lstatSync(`${dir}/${f}`).isDirectory()).forEach(file => {
-    const filePath = join(dir, file);
-    // const newFilePath = join(newDir, newDir);
+function hexToString(str)
+{
+    const buf = new Buffer(str, 'hex');
+    return buf.toString('utf8');
+}
 
-    // const i = file.indexOf('-') !== -1 ? file.indexOf('-') : file.indexOf('.');
-    var content = fs.readFileSync(`${dir}/${file}`, 'utf8');
+console.log(utf8ToHex('EL'));
 
-    let newContent = content.replace(new RegExp(oldName, 'g'), newName);
-    newContent = newContent.replace(new RegExp(oldCap, 'g'), newCap);
-    // console.log(oldName, newName, oldCap, newCap)
-    const fileName = file.replace(oldName, newName);
-    // console.log(fileName, content.substring(0, 20))
-
-    fs.writeFileSync(`${newdir}/${fileName}`, newContent)
-    // fs.renameSync(filePath, newFilePath);
-  });
-
-  console.log('done')

@@ -10,26 +10,33 @@ export class ClassReader {
       moduleResolution: ts.ModuleResolutionKind.NodeJs,
       target: ts.ScriptTarget.Latest
     });
-    
+
     const typeChecker = program.getTypeChecker();
-    
-    
+    const l: { class: string, properties: { name: string, type: string }[] }[] = [];
+
     program.getSourceFiles()
       .filter(sourceFile => sourceFile.fileName.includes('models'))
       .forEach(node => {
-    
+
         const statements = node.statements.filter(s => ts.isClassDeclaration(s));
-    
+
         statements.forEach(statement => {
           const type = typeChecker.getTypeAtLocation(statement);
-    
-          console.log(JSON.stringify((statement as any).name.escapedText, null, '\t'));
-    
+          const properties = [];
+          // console.log(JSON.stringify((statement as any).name.escapedText, null, '\t'));
+          const className = (statement as any).name.escapedText;
+          // console.log(className);
+
           for (const property of type.getProperties()) {
             const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, statement);
-            console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
+            // console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
+            properties.push({ name: property.name, type: typeChecker.typeToString(propertyType) });
           }
+
+          l.push({class: className, properties});
         });
-      })
+      });
+
+    return l;
   }
 }

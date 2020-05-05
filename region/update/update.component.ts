@@ -59,9 +59,7 @@ export class UpdateComponent implements OnInit {
 
   createForm() {
     this.myForm = this.fb.group({
-      id: this.o.id,
-      name: [this.o.name, Validators.required],
-      imageUrl: [this.o.imageUrl, Validators.required],
+      /*{myFormfields}*/
     });
   }
 
