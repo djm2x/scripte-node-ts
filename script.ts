@@ -32,17 +32,6 @@ const convert = (from, to) => str => Buffer.from(str, from).toString(to)
 const utf8ToHex = convert('utf8', 'hex')
 const hexToUtf8 = convert('hex', 'utf8')
 
-function stringToHex(str)
-{
-    const buf = Buffer.from(str, 'utf8');
-    return buf.toString('hex');
-}
-
-function hexToString(str)
-{
-    const buf = new Buffer(str, 'hex');
-    return buf.toString('utf8');
-}
 
 console.log(utf8ToHex('EL'));
 

@@ -96,6 +96,14 @@ export class Generate {
             e.properties.forEach(p => {
               if (!p.name.includes('id')) {
                 formFields += formField.replace(new RegExp('{name}', 'g'), p.name) + '\r\n';
+
+                if (['string', 'boolean', 'Date', 'number'].indexOf(p.type) >= 0) {
+                  const cls = models.find(c => c.class === p.type)
+
+                  if (cls) {
+                    // add select input to html
+                  }
+                }
               }
               // columnDefs += JSON.stringify(p.name) + ',';
               myFormfields += `${p.name}: [this.o.${p.name}, Validators.required],\r\n`;
