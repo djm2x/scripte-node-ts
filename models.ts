@@ -10,4 +10,6 @@ export class User {
 export class Role {
     id = 0;
     name = '';
+    user = new User();
+    me = new Role();
 }

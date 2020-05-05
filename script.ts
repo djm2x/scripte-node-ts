@@ -18,7 +18,7 @@ const prompt = (question) => new Promise(res => rl.question(question, r => res(r
 
 const g = new Generate();
 
-// g.methode();
+g.methode();
 // console.log(process.env.npm_package_args_p1_p2)
 
 // function myFirstCallBack(x: number, y: number, callback: (s: number) => void) {
@@ -28,10 +28,10 @@ const g = new Generate();
 // myFirstCallBack(5, 6, (e) => {
 //   console.log(e);
 // })
-const convert = (from, to) => str => Buffer.from(str, from).toString(to)
-const utf8ToHex = convert('utf8', 'hex')
-const hexToUtf8 = convert('hex', 'utf8')
+// const convert = (from, to) => str => Buffer.from(str, from).toString(to)
+// const utf8ToHex = convert('utf8', 'hex')
+// const hexToUtf8 = convert('hex', 'utf8')
 
 
-console.log(utf8ToHex('EL'));
+// console.log(utf8ToHex('EL'));
 
