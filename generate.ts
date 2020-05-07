@@ -6,7 +6,7 @@ export class Generate {
   sourceFld = 'region';
   sourceFldCap = this.sourceFld.charAt(0).toUpperCase() + this.sourceFld.slice(1);
 
-  generationFolderName = 'generation2';
+  generationFolderName = 'generation';
 
   tableRowExemple = `<ng-container matColumnDef="{name}">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{name}</th>
