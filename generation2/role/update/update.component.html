@@ -1,0 +1,33 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    <mat-toolbar role="toolbar" class="task-header">
+      <span>{{title}}</span>
+    </mat-toolbar>
+    <mat-divider></mat-divider>
+  </h1>
+  <div class="content">
+    <div mat-dialog-content>
+
+      <form [formGroup]="myForm">
+        <mat-form-field appearance="fill" class="col-md-6">
+      <mat-label>name</mat-label>
+      <input matInput formControlName="name" required>
+    </mat-form-field>
+<mat-form-field appearance="fill" class="col-md-6">
+    <mat-label>Role</mat-label>
+    <mat-select formControlName="idRole" readonly>
+      <mat-option *ngFor="let e of uow.Roles" [value]="e.id">{{ e.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+      </form>
+
+
+    </div>
+
+    <div class="actions" mat-dialog-actions>
+      <button mat-button (click)="onNoClick()" type="button">Annuler</button>&nbsp;&nbsp;
+      <button mat-raised-button cdkFocusInitial color="primary" (click)="onOkClick(myForm.value)"
+        [disabled]="myForm.invalid">Enregistre</button>
+    </div>
+  </div>
+</div>

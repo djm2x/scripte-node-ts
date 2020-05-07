@@ -1,12 +1,10 @@
 'use strict'
-import { join } from 'path';
+import * as path from 'path';
 import * as readline from 'readline';
 import * as fs from 'fs';
 import * as url from 'url';
 import { Generate } from './generate';
-
-const FILE = `file://${join(__dirname, 'angular/index.html')}`;
-
+import { ClassReader } from './class-reader';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -34,4 +32,5 @@ g.methode();
 
 
 // console.log(utf8ToHex('EL'));
+
 
