@@ -5,35 +5,32 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Model;
-using Services;
-using System.Text.Encodings.Web;
+using Models;
 using Api.Providers;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Api.Controllers
+namespace Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UsersController : SuperController<User>
+    public class /*{model}*/sController : SuperController</*{model}*/>
     {
-        public UsersController(MyContext context ) : base(context)
+        public /*{model}*/sController(MyContext context ) : base(context)
         { }
 
-        [HttpGet("{startIndex}/{pageSize}/{sortBy}/{sortDir}/{firstName}/{lastName}")]
-        public async Task<IActionResult> GetAll(int startIndex, int pageSize, string sortBy, string sortDir, string firstName, string lastName)
+        [HttpGet("{startIndex}/{pageSize}/{sortBy}/{sortDir}//*{params}*/")]
+        public async Task<IActionResult> GetAll(int startIndex, int pageSize, string sortBy, string sortDir /*{params2}*/)
         {
-            // int i = typeof(T).FullName.LastIndexOf('.');
-            // string tableName = typeof(T).FullName.Substring(i + 1) + "s";
-            var q = _context.Users
+            var q = _context./*{model}*/s
+                /*{where}*/
                 .Where(e => firstName == "*" ? true : e.FirstName.ToLower().Contains(firstName.ToLower()))
                 .Where(e => lastName == "*" ? true : e.LastName.ToLower().Contains(lastName.ToLower()))
                 ;
 
             int count = await q.CountAsync();
 
-            var list = await q.OrderByName<User>(sortBy, sortDir == "desc")
+            var list = await q.OrderByName</*{model}*/>(sortBy, sortDir == "desc")
                 .Skip(startIndex)
                 .Take(pageSize)
                 .ToListAsync()

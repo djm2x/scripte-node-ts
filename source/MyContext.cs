@@ -10,6 +10,8 @@ namespace Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            /*{entities}*/
+
 
             modelBuilder
                 .Users()

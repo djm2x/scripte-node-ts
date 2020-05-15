@@ -24,16 +24,16 @@ export class ClassReader {
           const type = typeChecker.getTypeAtLocation(statement);
           const properties = [];
           // console.log(JSON.stringify((statement as any).name.escapedText, null, '\t'));
-          const className = (statement as any).name.escapedText;
+          const className: string = (statement as any).name.escapedText;
           // console.log(className);
 
           for (const property of type.getProperties()) {
             const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, statement);
-            // console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
-            properties.push({ name: property.name, type: typeChecker.typeToString(propertyType) });
+            console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
+            properties.push({ name: property.name.toLowerCase(), type: typeChecker.typeToString(propertyType) });
           }
 
-          l.push({class: className, properties});
+          l.push({class: className.toLowerCase(), properties});
         });
       });
 

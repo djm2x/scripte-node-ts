@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { ClassReader } from './class-reader';
 
 
+
 export class Generate {
   primitivetypes = ['string', 'boolean', 'Date', 'number'];
   sourceFld = 'region';

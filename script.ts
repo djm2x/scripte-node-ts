@@ -6,6 +6,7 @@ import * as fse from 'fs-extra';
 import * as url from 'url';
 import { Generate } from './generate';
 import { ClassReader } from './class-reader';
+import { Generate2 } from './generate2';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -40,23 +41,39 @@ const test2 = (state) =>  () => console.log(state);
 // test('me & you').do();
 test2('me & you');
 
-const files = fse.readdirSync('source');
+// const files = fse.readdirSync('source');
 
+// files.forEach((f, i) => {
+//   let e = f.replace(/\./g, '_');
+//   e = e.replace(/\-/g, '_');
 
-files.forEach((e, i) => {
-  if (i === 0) {
-    console.log(`
-      if (file === '${e}') {
+//   console.log(`const ${e.toUpperCase()} = '${f}';`)
+// })
+
+// files.forEach((f, i) => {
+//   let e = f.replace(/\./g, '_');
+//   e = e.replace(/\-/g, '_');
+
+//   if (i === 0) {
+//     console.log(`
+//       if (file === ${e.toUpperCase()}) {
                   
-      }
-    `)
-  } else {
-    console.log(`
-      else if (file === '${e}') {
+//       }
+//     `)
+//   } else {
+//     console.log(`
+//       else if (file === ${e.toUpperCase()}) {
                   
-      }
-    `)
-  }
+//       }
+//     `)
+//   }
   
-})
+// })
 // console.log(files, files.length)
+
+// String.prototype.capitalize = function() {
+//   return this.charAt(0).toUpperCase() + this.slice(1)
+// }
+
+
+new Generate2().methode()
