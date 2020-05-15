@@ -3,6 +3,7 @@ import { ClassReader } from './class-reader';
 
 
 export class Generate {
+  primitivetypes = ['string', 'boolean', 'Date', 'number'];
   sourceFld = 'region';
   sourceFldCap = this.sourceFld.charAt(0).toUpperCase() + this.sourceFld.slice(1);
 
@@ -24,6 +25,10 @@ export class Generate {
       <mat-option *ngFor="let e of uow.{class}s" [value]="e.id">{{ e.{name} }}</mat-option>
     </mat-select>
   </mat-form-field>`;
+
+  checkBoxExemple = `<mat-checkbox class="col-md-6" formControlName="{name}"  labelPosition="before" >
+    Activer
+  </mat-checkbox>`
 
   constructor() { }
 
@@ -76,33 +81,34 @@ export class Generate {
 
       m.properties.forEach(p => {
         if (!p.name.includes('id')) {
+          const isTypePrimitive = this.primitivetypes.indexOf(p.type) >= 0;
+          
           if (p.name.includes('date')) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>', p.name)
+            
             b = this.tableRowExemple.replace(new RegExp('{pipe}', 'g'), ' | date : "dd/MM/yyyy"');
             tableRowsHtml += b.replace(new RegExp('{name}', 'g'), p.name);
           } else {
-            // console.log('>>>>>>>>>>>>>>>>>>>>', p.name)
-            b = this.tableRowExemple.replace(new RegExp('{pipe}', 'g')
-              , p.type.includes('bool') ? ` ? 'Oui' : 'Non'` : '');
+            
+            b = this.tableRowExemple.replace(new RegExp('{pipe}', 'g'), p.type.includes('bool') ? ` ? 'Oui' : 'Non'` : '');
             tableRowsHtml += b.replace(new RegExp('{name}', 'g'), p.name);
           }
           // columnDefs += JSON.stringify(p.name) + ',';
           columnDefs += `'${p.name}' ,`;
 
           // update
-          if (['string', 'boolean', 'Date', 'number'].indexOf(p.type) >= 0) {
-            formFieldsHtml += this.formField.replace(new RegExp('{name}', 'g'), p.name) + '\r\n';
-          } else {
+          if (!isTypePrimitive) {
             // generate a select input html 
             const cls = m.class === p.type;
 
             if (cls) {
               // add select input to html
-              // console.log(cls.)
-
               this.selectExemple = this.selectExemple.replace(new RegExp('{class}', 'g'), m.class);
               formFieldsHtml += this.selectExemple.replace(new RegExp('{name}', 'g'), m.properties[1].name);
             }
+          } else if (p.type === 'boolean') {
+            formFieldsHtml += this.checkBoxExemple.replace(new RegExp('{name}', 'g'), p.name) + '\r\n';
+          } else {
+            formFieldsHtml += this.formField.replace(new RegExp('{name}', 'g'), p.name) + '\r\n';
           }
         }
         // columnDefs += JSON.stringify(p.name) + ',';

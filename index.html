@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>me & you</h1>
+
+
+
+    <script>
+        const convert = (from, to) => str => Buffer.from(str, from).toString(to)
+        const utf8ToHex = convert('utf8', 'hex')
+        const hexToUtf8 = convert('hex', 'utf8')
+
+
+        console.log(utf8ToHex('EL'));
+    </script>
+</body>
+</html>
