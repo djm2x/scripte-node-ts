@@ -25,13 +25,16 @@ export class ClassReader {
           const properties = [];
           // console.log(JSON.stringify((statement as any).name.escapedText, null, '\t'));
           const className: string = (statement as any).name.escapedText;
-          // console.log(className);
+          console.log('-------------------------->');
+          console.log(className);
+          console.log('---');
 
           for (const property of type.getProperties()) {
             const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, statement);
-            console.log("Name:", property.name, "Type:", typeChecker.typeToString(propertyType));
-            properties.push({ name: property.name.toLowerCase(), type: typeChecker.typeToString(propertyType) });
+            console.log("Name:", property.name, " | Type:", typeChecker.typeToString(propertyType));
+            properties.push({ name: property.name, type: typeChecker.typeToString(propertyType) });
           }
+
 
           l.push({class: className.toLowerCase(), properties});
         });

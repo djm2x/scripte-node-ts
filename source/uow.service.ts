@@ -1,14 +1,14 @@
 
-import { UserService } from './user.service';
 import { Injectable } from '@angular/core';
 import { AccountService } from './account.service';
-
+/*{imports}*/
 @Injectable({
   providedIn: 'root'
 })
 export class UowService {
-  users = new UserService();
   accounts = new AccountService();
+  /*{services}*/
+  
 
   constructor() { }
 
