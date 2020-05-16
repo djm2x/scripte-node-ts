@@ -76,4 +76,6 @@ test2('me & you');
 // }
 
 
-new Generate2().methode()
+new Generate2().methode();
+console.log('anytime ser')
+process.exit(0);

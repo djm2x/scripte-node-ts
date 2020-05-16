@@ -228,9 +228,9 @@ export class Generate2 {
             }
 
             // angular
-            else if (file ===  USER_COMPONENT_HTML) {
+            else if (file === USER_COMPONENT_HTML) {
                 const distination = `${asp}/angular/src/app/admin`;
-                
+
                 let content = fse.readFileSync(`${source}/${USER_COMPONENT_HTML}`, 'utf8');
 
                 let inputHtml =
@@ -241,16 +241,24 @@ export class Generate2 {
 
                 let selectHtml =
                     `<mat-form-field appearance="fill" class="col-md-6">
-                    <mat-label>{classNav}</mat-label>
+                    <mat-label>{classNav}s</mat-label>
                     <mat-select formControlName="{propertie}" readonly>
                         <mat-option *ngFor="let e of {classNav}s" [value]="e.id">{{ e[1] }}</mat-option>
                     </mat-select>
                 </mat-form-field>`;
 
                 let tableRow =
-                `<ng-container matColumnDef="{propertieTitle}">
+                    `<ng-container matColumnDef="{propertieTitle}">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{propertieTitle}</th>
                     <td mat-cell *matCellDef="let row">{{row.{propertie}{pipe}}}</td>
+                </ng-container>`;
+
+                let tableRowImage = 
+                `<ng-container [matColumnDef]="{propertieTitle}">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{propertieTitle}</th>
+                    <td mat-cell *matCellDef="let row">
+                        <img #img (error)="imgError(img)" [src]="displayImage(row.{propertie})" alt="" srcset="">
+                    </td>
                 </ng-container>`;
 
                 // edit content
@@ -261,7 +269,7 @@ export class Generate2 {
 
                     e.properties.forEach(p => {
 
-                        // for section of search
+                        //* for section of search
                         const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
 
                         if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
@@ -276,23 +284,27 @@ export class Generate2 {
                             }
                         }
 
-                        // for section of table
+                        //* for section of table
                         if (isTypePrimitive && !p.name.startsWith('disc') && p.name !== 'id' && !p.type.includes('[]')) {
-
-                            if (p.name.includes('id')) {
+                            const isPropertyNav = p.name.includes('id');
+                            const isImage = p.name.includes('im');
+                            if (isPropertyNav) {
                                 const classNav = p.name.replace('id', '').toLowerCase();
                                 rows += tableRow.replace(/\{propertieTitle\}/g, classNav);
                                 rows = rows.replace(/\{propertie\}/g, `${classNav}[0]`);
                                 rows = rows.replace('{pipe}', '');
+                            } else if(isImage) {
+                                rows += tableRowImage.replace(/\{propertieTitle\}/g, p.name);
+                                rows = rows.replace(/\{propertie\}/g, p.name);
                             } else {
                                 const pipe = p.type === 'Date' ? ' | date : "dd/MM/yyyy"'
-                                        : (p.type === 'boolean' ? ` ? 'Oui' : 'Non'` : '');
+                                    : (p.type === 'boolean' ? ` ? 'Oui' : 'Non'` : '');
 
                                 rows += tableRow.replace(/\{propertieTitle\}/g, p.name);
                                 rows = rows.replace(/\{propertie\}/g, p.name);
                                 rows = rows.replace('{pipe}', pipe);
                             }
-                            
+
                         }
                     });
 
@@ -305,7 +317,7 @@ export class Generate2 {
                     fse.ensureDirSync(`${distination}/${e.class}`);
                     fse.writeFileSync(`${distination}/${e.class}/${e.class}.component.html`, newContent);
                     console.log(`>> ${e.class}.component.html done`);
-                    
+
                     fse.copySync(`${source}/${USER_COMPONENT_SCSS}`, `${distination}/${e.class}/${e.class}.component.scss`)
                     console.log(`>> ${e.class}.component.scss done`);
                 });
@@ -318,26 +330,136 @@ export class Generate2 {
 
 
             else if (file === UPDATE_COMPONENT_TS) {
+                const distination = `${asp}/angular/src/app/admin`;
 
+                let content = fse.readFileSync(`${source}/${UPDATE_COMPONENT_TS}`, 'utf8');
+                // edit content
+                classes.forEach(e => {
+                    let selections = '';
+                    let myFormfields = '';
+
+                    e.properties.forEach(p => {
+
+                        // for section of search
+                        const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
+                        if (isTypePrimitive) {
+
+                            const isSelect = p.name.toLowerCase() !== 'id' && p.name.includes('id');
+                            const isEmail = p.name.includes('email');
+
+                            myFormfields += `${p.name}: [this.o.${p.name}, [Validators.required, ${isEmail ? 'Validators.email' : ''}]],\r\n`;
+
+                            if (isSelect) {
+                                const classNav = p.name.replace('id', '').toLowerCase();
+                                selections += `${classNav}s = this.uow.${classNav}s.get();,\r\n`;
+                            }
+                        }
+                    });
+
+                    // content = content.replace('/*{imports}*/', imports);
+                    let newContent = content.replace(/User\$/g, this.Cap(e.class));
+                    newContent = newContent.replace(/user/g, e.class);
+                    newContent = newContent.replace('/*{myFormfields}*/', myFormfields);
+                    newContent = newContent.replace('/*{selections}*/', selections);
+
+                    // write content in new location
+                    fse.ensureDirSync(`${distination}/${e.class}/update`);
+                    fse.writeFileSync(`${distination}/${e.class}/update/update.component.ts`, newContent);
+                    console.log(`>> ${e.class}/update.component.ts done`);
+                });
             }
 
 
             else if (file === UPDATE_COMPONENT_HTML) {
+                const distination = `${asp}/angular/src/app/admin`;
 
+                let content = fse.readFileSync(`${source}/${UPDATE_COMPONENT_HTML}`, 'utf8');
+
+                let inputHtml =
+                    `<mat-form-field appearance="fill" class="col-md-6">
+                    <mat-label>{propertie}</mat-label>
+                    <input matInput [formControl]="{propertie}" required>
+                </mat-form-field>`;
+
+                let imageHtml = 
+                `<app-upload-image nameBtn="Image" [folderToSaveInServer]="folderToSaveInServer" [propertyOfParent]="{propertie}To"
+                    [eventSubmitToParent]="{propertie}From" [eventSubmitFromParent]="eventSubmitFromParent">
+                </app-upload-image>`;
+
+                let selectHtml =
+                    `<mat-form-field appearance="fill" class="col-md-6">
+                    <mat-label>{classNav}s</mat-label>
+                    <mat-select formControlName="{propertie}" readonly>
+                        <mat-option *ngFor="let e of {classNav}s" [value]="e.id">{{ e[1] }}</mat-option>
+                    </mat-select>
+                </mat-form-field>`;
+
+                let checkBoxHtml =
+                    `<mat-checkbox class="col-md-6" formControlName="{propertie}"  labelPosition="before" >
+                    Activer
+                </mat-checkbox>`;
+
+                let dateHtml =
+                    `<mat-form-field appearance="fill" class="col-md-6">
+                    <mat-label>{propertie}</mat-label>
+                    <input matInput [matDatepicker]="picker{i}" formControlName="{propertie}">
+                    <mat-datepicker-toggle matSuffix [for]="picker{i}"></mat-datepicker-toggle>
+                    <mat-datepicker #picker{i}></mat-datepicker>
+                </mat-form-field>`;
+
+                // edit content
+                classes.forEach(e => {
+                    fse.ensureDirSync(`${distination}/${e.class}`);
+                    let formFields = '';
+
+                    e.properties.forEach((p, i) => {
+
+                        // for section of search
+                        const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
+                        if (isTypePrimitive && p.name.toLowerCase() !== 'id') {
+
+                            const isDate = p.type === 'Date';
+                            const isSelect = p.name.toLowerCase() !== 'id' && p.name.includes('id');
+                            const isCheckBox = p.type === 'boolean';
+                            const isImage = p.name.includes('im');
+
+                            if (isDate) {
+                                formFields += dateHtml.replace(/\{propertie\}/g, p.name) + '\r\n';
+                                formFields = formFields.replace(/\{i\}/g, `${i}`);
+                            } else if (isSelect) {
+                                const classNav = p.name.replace('id', '').toLowerCase();
+                                formFields += selectHtml.replace(/\{classNav\}/g, classNav) + '\r\n';
+                                formFields = formFields.replace(/\{propertie\}/g, p.name);
+                            } else if (isCheckBox) {
+                                formFields += checkBoxHtml.replace(/\{propertie\}/g, p.name) + '\r\n';
+                            } else if (isImage) {
+                                formFields = imageHtml.replace(/\{propertie\}/g, p.name) + '\r\n' + formFields;
+                            } else {
+                                formFields += inputHtml.replace(/\{propertie\}/g, p.name) + '\r\n';
+                            }
+                        }
+                    });
+
+                    let newContent = content.replace('{formFields}', formFields);
+                    
+
+                    // write content in new location
+                    fse.ensureDirSync(`${distination}/${e.class}/update`);
+                    fse.writeFileSync(`${distination}/${e.class}/update/update.component.html`, newContent);
+                    console.log(`>> ${e.class}/update.component.html done`);
+
+                    fse.copySync(`${source}/${UPDATE_COMPONENT_SCSS}`, `${distination}/${e.class}/update/${UPDATE_COMPONENT_SCSS}`)
+                    console.log(`>> ${e.class}/update.component.scss done`);
+                });
 
 
             }
-
-
-            // else if (file === USER_COMPONENT_SCSS) {
-
-            // }
 
 
             else if (file === USER_COMPONENT_TS) {
 
                 const distination = `${asp}/angular/src/app/admin`;
-                
+
                 let content = fse.readFileSync(`${source}/${USER_COMPONENT_TS}`, 'utf8');
                 // edit content
                 classes.forEach(e => {
@@ -371,11 +493,11 @@ export class Generate2 {
                             if (p.name.includes('id')) {
                                 const classNav = p.name.replace('id', '').toLowerCase();
                                 columnDefs += ` '${classNav}',`;
-                                
+
                             } else {
                                 columnDefs += ` '${p.name}',`;
                             }
-                            
+
                         }
                     });
 

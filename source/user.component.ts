@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, EventEmitter, Inject } from '@angular/core';
 import { merge } from 'rxjs';
 import { UpdateComponent } from './update/update.component';
 import { UowService } from 'src/app/services/uow.service';
@@ -31,7 +31,8 @@ export class User$Component implements OnInit {
 
   /*{formControlInit}*/
 
-  constructor(private uow: UowService, public dialog: MatDialog, private mydialog: DeleteService, ) { }
+  constructor(private uow: UowService, public dialog: MatDialog
+    , private mydialog: DeleteService, @Inject('BASE_URL') private url: string ) { }
 
   ngOnInit() {
     merge(...[this.sort.sortChange, this.paginator.page, this.update]).pipe(startWith(null as any)).subscribe(
@@ -84,11 +85,7 @@ export class User$Component implements OnInit {
   add() {
     this.openDialog(new User$(), 'Ajouter user').subscribe(result => {
       if (result) {
-        this.uow.users.post(result).subscribe(
-          r => {
-            this.update.next(true);
-          }
-        );
+        this.update.next(true);
       }
     });
   }
@@ -96,11 +93,7 @@ export class User$Component implements OnInit {
   edit(o: User$) {
     this.openDialog(o, 'Modifier user').subscribe((result: User$) => {
       if (result) {
-        this.uow.users.put(result.id, result).subscribe(
-          r => {
-            this.update.next(true);
-          }
-        );
+        this.update.next(true);
       }
     });
   }
@@ -110,6 +103,21 @@ export class User$Component implements OnInit {
     if (r === 'ok') {
       this.uow.users.delete(id).subscribe(() => this.update.next(true));
     }
+  }
+
+  displayImage(urlImage: string) {
+    if (!urlImage) {
+      return 'assets/404.jpg';
+    }
+    if (urlImage && urlImage.startsWith('http')) {
+      return urlImage;
+    }
+
+    return `${this.url}/users/${urlImage.replace(';', '')}`;
+  }
+
+  imgError(img: any) {
+    img.src = 'assets/404.jpg';
   }
 
 }

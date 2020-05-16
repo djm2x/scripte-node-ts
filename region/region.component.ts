@@ -22,6 +22,8 @@ export class RegionComponent implements OnInit {
   dataSource = [];
   displayedColumns = [/*{columnDefs}*/];
 
+  /*{columnDefs}*/
+
   constructor(private uow: UowService, public dialog: MatDialog, private mydialog: DeleteService, ) { }
 
   ngOnInit() {

@@ -9,66 +9,7 @@
     <div mat-dialog-content>
 
       <form [formGroup]="myForm">
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>Nom</mat-label>
-          <input matInput formControlName="firstName" required>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>Prenom</mat-label>
-          <input matInput formControlName="lastName" required>
-        </mat-form-field>
-
-        <mat-form-field  appearance="fill" class="col-md-6">
-          <mat-label>service</mat-label>
-          <mat-select formControlName="service">
-            <mat-option value="">...</mat-option>
-            <mat-option *ngFor="let e of services" [value]="e">{{e}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field  appearance="fill" class="col-md-6">
-          <mat-label>fonction</mat-label>
-          <mat-select formControlName="fonction">
-            <mat-option value="">...</mat-option>
-            <mat-option *ngFor="let e of fonctions" [value]="e">{{e}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field  appearance="fill" class="col-md-6">
-          <mat-label>etat</mat-label>
-          <mat-select formControlName="userStatus">
-            <mat-option value="">...</mat-option>
-            <mat-option *ngFor="let e of [true, false]" [value]="e">{{e ? 'Actif' : 'Non Actif'}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" required>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>matricule</mat-label>
-          <input matInput formControlName="matricule" required>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>Mot de pass</mat-label>
-          <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" required>
-          <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide">
-            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-6">
-          <mat-label>Role</mat-label>
-          <mat-select formControlName="role">
-            <mat-option *ngFor="let e of roles" [value]="e">{{ e }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
+        {formFields}
       </form>
 
     </div>
