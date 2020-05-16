@@ -6,15 +6,16 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteService } from 'src/app/components/delete/delete.service';
-import { User } from 'src/app/Models/models';
+import { User$ } from 'src/app/Models/models';
 import { FormControl } from '@angular/forms';
+import { startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit {
+export class User$Component implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   update = new EventEmitter();
@@ -23,30 +24,17 @@ export class UserComponent implements OnInit {
   isRateLimitReached = false;
 
   dataSource = [];
-  columnDefs = [
-    { columnDef: 'firstName', headName: '' },
-    { columnDef: 'matricule', headName: '' },
-    { columnDef: 'service', headName: '' },
-    { columnDef: 'fonction', headName: '' },
-    { columnDef: 'userStatus', headName: '' },
-    { columnDef: 'email', headName: '' },
-    { columnDef: 'option', headName: 'OPTION' },
-  ].map(e => {
-    e.headName = e.headName === '' ? e.columnDef.toUpperCase() : e.headName.toUpperCase();
-    return e;
-  });
 
-  displayedColumns = this.columnDefs.map(e => e.columnDef);
+  displayedColumns = [/*{columnDefs}*/ 'option'];
 
   panelOpenState = false;
-  firstName = new FormControl('');
-  lastName = new FormControl('');
+
+  /*{formControlInit}*/
 
   constructor(private uow: UowService, public dialog: MatDialog, private mydialog: DeleteService, ) { }
 
   ngOnInit() {
-    this.getPage(0, 10, 'id', 'desc');
-    merge(...[this.sort.sortChange, this.paginator.page, this.update]).subscribe(
+    merge(...[this.sort.sortChange, this.paginator.page, this.update]).pipe(startWith(null as any)).subscribe(
       r => {
         r === true ? this.paginator.pageIndex = 0 : r = r;
         !this.paginator.pageSize ? this.paginator.pageSize = 10 : r = r;
@@ -57,16 +45,14 @@ export class UserComponent implements OnInit {
           this.paginator.pageSize,
           this.sort.active ? this.sort.active : 'id',
           this.sort.direction ? this.sort.direction : 'desc',
-          this.firstName.value === '' ? '*' : this.firstName.value,
-          this.lastName.value === '' ? '*' : this.lastName.value,
+          /*{params}*/
         );
       }
     );
   }
 
   reset() {
-    this.firstName.setValue('');
-    this.lastName.setValue('');
+    /*{formControlReset}*/
     this.update.next(true);
   }
 
@@ -74,8 +60,8 @@ export class UserComponent implements OnInit {
     this.update.next(true);
   }
 
-  getPage(startIndex, pageSize, sortBy, sortDir, ...args: any[]) {
-    this.uow.users.getAll(startIndex, pageSize, sortBy, sortDir, args).subscribe(
+  getPage(startIndex, pageSize, sortBy, sortDir,/*{params2}*/) {
+    this.uow.users.getAll(startIndex, pageSize, sortBy, sortDir, /*{params3}*/).subscribe(
       (r: any) => {
         console.log(r.list);
         this.dataSource = r.list;
@@ -85,7 +71,7 @@ export class UserComponent implements OnInit {
     );
   }
 
-  openDialog(o: User, text) {
+  openDialog(o: User$, text) {
     const dialogRef = this.dialog.open(UpdateComponent, {
       width: '750px',
       disableClose: true,
@@ -96,7 +82,7 @@ export class UserComponent implements OnInit {
   }
 
   add() {
-    this.openDialog(new User(), 'Ajouter Utilisateur').subscribe(result => {
+    this.openDialog(new User$(), 'Ajouter user').subscribe(result => {
       if (result) {
         this.uow.users.post(result).subscribe(
           r => {
@@ -107,8 +93,8 @@ export class UserComponent implements OnInit {
     });
   }
 
-  edit(o: User) {
-    this.openDialog(o, 'Modifier Utilisateur').subscribe((result: User) => {
+  edit(o: User$) {
+    this.openDialog(o, 'Modifier user').subscribe((result: User$) => {
       if (result) {
         this.uow.users.put(result.id, result).subscribe(
           r => {
@@ -120,7 +106,7 @@ export class UserComponent implements OnInit {
   }
 
   async delete(id: number) {
-    const r = await this.mydialog.openDialog('Utilisateur').toPromise();
+    const r = await this.mydialog.openDialog('user').toPromise();
     if (r === 'ok') {
       this.uow.users.delete(id).subscribe(() => this.update.next(true));
     }

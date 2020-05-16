@@ -28,7 +28,7 @@ export class Generate2 {
         const primitivetypes = ['string', 'boolean', 'Date', 'number'];
         const source = 'source';
         const asp = 'asp';
-        const angular = `${asp}/angular/admin`;
+        const angular_app = `${asp}/angular/src/app`;
         const files = fse.readdirSync('source');
 
         const classes = new ClassReader().methode();
@@ -49,28 +49,19 @@ export class Generate2 {
                 // content = content.replace('/*{imports}*/', imports);
                 content = content.replace('/*{routes}*/', routes);
                 // write content in new location
-                fse.ensureDirSync(angular);
-                fse.writeFileSync(`./${angular}/${ADMIN_ROUTING_MODULE_TS}`, content);
+                fse.ensureDirSync(`${angular_app}/admin`);
+                fse.writeFileSync(`./${angular_app}/admin/${ADMIN_ROUTING_MODULE_TS}`, content);
                 console.log(`>> ${ADMIN_ROUTING_MODULE_TS} done`);
-            }
 
-            else if (file === ADMIN_MODULE_TS) {
-                // get content
-                let content = fse.readFileSync(`${source}/${ADMIN_MODULE_TS}`, 'utf8');
-                fse.writeFileSync(`./${angular}/${ADMIN_MODULE_TS}`, content);
+                fse.copySync(`${source}/${ADMIN_MODULE_TS}`, `${angular_app}/admin/${ADMIN_MODULE_TS}`);
                 console.log(`>> ${ADMIN_MODULE_TS} done`);
-            }
 
+                fse.copySync(`${MODELS_TS}`, `${angular_app}/models/${MODELS_TS}`);
+                console.log(`>> ${MODELS_TS} done`);
+            }
 
             else if (file === DATASEEDING_CS) {
 
-            }
-
-
-            else if (file === MODELS_TS) {
-                let content = fse.readFileSync(`${MODELS_TS}`, 'utf8');
-                fse.writeFileSync(`./${angular}/${MODELS_TS}`, content);
-                console.log(`>> ${MODELS_TS} done`);
             }
 
 
@@ -237,8 +228,87 @@ export class Generate2 {
             }
 
             // angular
-            else if (file === UPDATE_COMPONENT_HTML) {
+            else if (file ===  USER_COMPONENT_HTML) {
+                const distination = `${asp}/angular/src/app/admin`;
+                
+                let content = fse.readFileSync(`${source}/${USER_COMPONENT_HTML}`, 'utf8');
 
+                let inputHtml =
+                    `<mat-form-field appearance="fill" class="col-md-6">
+                    <mat-label>{propertie}</mat-label>
+                    <input matInput [formControl]="{propertie}" required>
+                </mat-form-field>`;
+
+                let selectHtml =
+                    `<mat-form-field appearance="fill" class="col-md-6">
+                    <mat-label>{classNav}</mat-label>
+                    <mat-select formControlName="{propertie}" readonly>
+                        <mat-option *ngFor="let e of {classNav}s" [value]="e.id">{{ e[1] }}</mat-option>
+                    </mat-select>
+                </mat-form-field>`;
+
+                let tableRow =
+                `<ng-container matColumnDef="{propertieTitle}">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{propertieTitle}</th>
+                    <td mat-cell *matCellDef="let row">{{row.{propertie}{pipe}}}</td>
+                </ng-container>`;
+
+                // edit content
+                classes.forEach(e => {
+                    fse.ensureDirSync(`${distination}/${e.class}`);
+                    let search = '';
+                    let rows = '';
+
+                    e.properties.forEach(p => {
+
+                        // for section of search
+                        const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
+
+                        if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
+                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+
+                            if (p.name.includes('id')) { // generate select
+                                const classNav = p.name.replace('id', '');
+                                search += selectHtml.replace(/\{classNav\}/g, classNav);
+                                search = search.replace('{propertie}', p.name);
+                            } else { // inputs of text
+                                search += inputHtml.replace(/\{propertie\}/g, p.name);
+                            }
+                        }
+
+                        // for section of table
+                        if (isTypePrimitive && !p.name.startsWith('disc') && p.name !== 'id' && !p.type.includes('[]')) {
+
+                            if (p.name.includes('id')) {
+                                const classNav = p.name.replace('id', '').toLowerCase();
+                                rows += tableRow.replace(/\{propertieTitle\}/g, classNav);
+                                rows = rows.replace(/\{propertie\}/g, `${classNav}[0]`);
+                                rows = rows.replace('{pipe}', '');
+                            } else {
+                                const pipe = p.type === 'Date' ? ' | date : "dd/MM/yyyy"'
+                                        : (p.type === 'boolean' ? ` ? 'Oui' : 'Non'` : '');
+
+                                rows += tableRow.replace(/\{propertieTitle\}/g, p.name);
+                                rows = rows.replace(/\{propertie\}/g, p.name);
+                                rows = rows.replace('{pipe}', pipe);
+                            }
+                            
+                        }
+                    });
+
+                    // content = content.replace('/*{imports}*/', imports);
+                    let newContent = content.replace(/\{model\}/g, this.Cap(e.class));
+                    newContent = newContent.replace('{search}', search);
+                    newContent = newContent.replace('{tableRows}', rows);
+
+                    // write content in new location
+                    fse.ensureDirSync(`${distination}/${e.class}`);
+                    fse.writeFileSync(`${distination}/${e.class}/${e.class}.component.html`, newContent);
+                    console.log(`>> ${e.class}.component.html done`);
+                    
+                    fse.copySync(`${source}/${USER_COMPONENT_SCSS}`, `${distination}/${e.class}/${e.class}.component.scss`)
+                    console.log(`>> ${e.class}.component.scss done`);
+                });
             }
 
 
@@ -252,7 +322,7 @@ export class Generate2 {
             }
 
 
-            else if (file === USER_COMPONENT_HTML) {
+            else if (file === UPDATE_COMPONENT_HTML) {
 
 
 
@@ -265,6 +335,65 @@ export class Generate2 {
 
 
             else if (file === USER_COMPONENT_TS) {
+
+                const distination = `${asp}/angular/src/app/admin`;
+                
+                let content = fse.readFileSync(`${source}/${USER_COMPONENT_TS}`, 'utf8');
+                // edit content
+                classes.forEach(e => {
+                    fse.ensureDirSync(`${distination}/${e.class}`);
+                    let columnDefs = '';
+                    let formControlInit = '';
+                    let formControlReset = '';
+                    let params = '';
+                    let params2 = '';
+
+                    e.properties.forEach(p => {
+
+                        // for section of search
+                        const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
+
+                        if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
+                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+
+                            const value = p.type === 'string' ? '' : 0;
+
+                            formControlInit += `${p.name} = new FormControl(${value === 0 ? 0 : "''"});\r\n`;
+                            formControlReset += `this.${p.name}.setValue(${value === 0 ? 0 : "''"});\r\n`;
+
+                            params += `this.${p.name}.value === ${value === 0 ? 0 : "''"} ? ${value === 0 ? 0 : "'*'"} : this.${p.name}.value,\r\n`;
+                            params2 += ` ${p.name},`;
+                        }
+
+                        // for section displayedColumns for table
+                        if (isTypePrimitive && !p.name.startsWith('disc') && p.name !== 'id' && !p.type.includes('[]')) {
+
+                            if (p.name.includes('id')) {
+                                const classNav = p.name.replace('id', '').toLowerCase();
+                                columnDefs += ` '${classNav}',`;
+                                
+                            } else {
+                                columnDefs += ` '${p.name}',`;
+                            }
+                            
+                        }
+                    });
+
+                    // content = content.replace('/*{imports}*/', imports);
+                    let newContent = content.replace(/User\$/g, this.Cap(e.class));
+                    newContent = newContent.replace(/user/g, e.class);
+                    newContent = newContent.replace('/*{columnDefs}*/', columnDefs);
+                    newContent = newContent.replace('/*{formControlInit}*/', formControlInit);
+                    newContent = newContent.replace('/*{formControlReset}*/', formControlReset);
+                    newContent = newContent.replace('/*{params}*/', params);
+                    newContent = newContent.replace('/*{params2}*/', params2);
+                    newContent = newContent.replace('/*{params3}*/', params2);
+
+                    // write content in new location
+                    fse.ensureDirSync(`${distination}/${e.class}`);
+                    fse.writeFileSync(`${distination}/${e.class}/${e.class}.component.ts`, newContent);
+                    console.log(`>> ${e.class}.component.ts done`);
+                });
 
             }
 

@@ -21,7 +21,7 @@ export class Blog {
     date = new Date();
     idUser = 0;
     user = new User();
-    category = new Category();
+    idCategory = new Category();
 }
 
 export class Category {

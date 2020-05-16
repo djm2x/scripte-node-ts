@@ -2,7 +2,7 @@ import { UowService } from 'src/app/services/uow.service';
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User } from 'src/app/Models/models';
+import { User } from 'src/app/models/models';
 
 @Component({
   selector: 'app-update',
