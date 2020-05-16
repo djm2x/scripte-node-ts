@@ -133,7 +133,7 @@ export class Generate2 {
                     e.properties.forEach(p => {
                         const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
                         if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
-                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+                            && !p.name.startsWith('image') && !p.name.startsWith('disc')) {
 
                             params += `/{${p.name}}`;
                             params2 += `, ${p.type === 'number' ? 'int' : p.type} ${p.name}`;
@@ -202,7 +202,7 @@ export class Generate2 {
                         const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
 
                         if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
-                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+                            && !p.name.startsWith('image') && !p.name.startsWith('disc')) {
 
                             params += `, ${p.name}`;
                             params2 += `/\${${p.name}}`;
@@ -273,7 +273,7 @@ export class Generate2 {
                         const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
 
                         if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
-                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+                            && !p.name.startsWith('image') && !p.name.startsWith('disc')) {
 
                             if (p.name.includes('id')) { // generate select
                                 const classNav = p.name.replace('id', '');
@@ -287,7 +287,7 @@ export class Generate2 {
                         //* for section of table
                         if (isTypePrimitive && !p.name.startsWith('disc') && p.name !== 'id' && !p.type.includes('[]')) {
                             const isPropertyNav = p.name.includes('id');
-                            const isImage = p.name.includes('im');
+                            const isImage = p.name.includes('image');
                             if (isPropertyNav) {
                                 const classNav = p.name.replace('id', '').toLowerCase();
                                 rows += tableRow.replace(/\{propertieTitle\}/g, classNav);
@@ -337,6 +337,9 @@ export class Generate2 {
                 classes.forEach(e => {
                     let selections = '';
                     let myFormfields = '';
+                    let imagesInit = '';
+                    let imagesFrom = '';
+                    let imagesTo = '';
 
                     e.properties.forEach(p => {
 
@@ -346,12 +349,20 @@ export class Generate2 {
 
                             const isSelect = p.name.toLowerCase() !== 'id' && p.name.includes('id');
                             const isEmail = p.name.includes('email');
+                            const isImage = p.name.includes('image');
 
                             myFormfields += `${p.name}: [this.o.${p.name}, [Validators.required, ${isEmail ? 'Validators.email' : ''}]],\r\n`;
 
                             if (isSelect) {
                                 const classNav = p.name.replace('id', '').toLowerCase();
-                                selections += `${classNav}s = this.uow.${classNav}s.get();,\r\n`;
+                                selections += `${classNav}s = this.uow.${classNav}s.get();\r\n`;
+                            }
+
+                            if (isImage) {
+                                
+                                imagesInit += `${p.name}To = new Subject();\r\n${p.name}From = new Subject();\r\n\r\n`;
+                                imagesFrom += `this.${p.name}From.subscribe(r => this.myForm.get('${p.name}').setValue(r));\r\n`;
+                                imagesTo += `this.${p.name}To.next(this.o.${p.name});;\r\n`;
                             }
                         }
                     });
@@ -361,6 +372,9 @@ export class Generate2 {
                     newContent = newContent.replace(/user/g, e.class);
                     newContent = newContent.replace('/*{myFormfields}*/', myFormfields);
                     newContent = newContent.replace('/*{selections}*/', selections);
+                    newContent = newContent.replace('/*{imagesInit}*/', imagesInit);
+                    newContent = newContent.replace('/*{imagesFrom}*/', imagesFrom);
+                    newContent = newContent.replace('/*{imagesTo}*/', imagesTo);
 
                     // write content in new location
                     fse.ensureDirSync(`${distination}/${e.class}/update`);
@@ -421,7 +435,7 @@ export class Generate2 {
                             const isDate = p.type === 'Date';
                             const isSelect = p.name.toLowerCase() !== 'id' && p.name.includes('id');
                             const isCheckBox = p.type === 'boolean';
-                            const isImage = p.name.includes('im');
+                            const isImage = p.name.includes('image');
 
                             if (isDate) {
                                 formFields += dateHtml.replace(/\{propertie\}/g, p.name) + '\r\n';
@@ -476,7 +490,7 @@ export class Generate2 {
                         const isTypePrimitive = primitivetypes.indexOf(p.type) >= 0;
 
                         if (isTypePrimitive && p.name.toLowerCase() !== 'id' && p.type !== 'Date' && p.type !== 'boolean'
-                            && !p.name.startsWith('im') && !p.name.startsWith('disc')) {
+                            && !p.name.startsWith('image') && !p.name.startsWith('disc')) {
 
                             const value = p.type === 'string' ? '' : 0;
 
@@ -495,7 +509,12 @@ export class Generate2 {
                                 columnDefs += ` '${classNav}',`;
 
                             } else {
-                                columnDefs += ` '${p.name}',`;
+                                const isImage = p.name.includes('image');
+                                if (isImage) {
+                                    columnDefs = ` '${p.name}',` + columnDefs
+                                } else {
+                                    columnDefs += ` '${p.name}',`;
+                                }
                             }
 
                         }

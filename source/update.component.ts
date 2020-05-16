@@ -20,6 +20,8 @@ export class UpdateComponent implements OnInit {
   imageTo = new Subject();
   imageFrom = new Subject();
 
+  /*imagesInit*/
+
   eventSubmitFromParent = new Subject();
 
   constructor(public dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any
@@ -29,10 +31,11 @@ export class UpdateComponent implements OnInit {
     this.o = this.data.model;
     this.title = this.data.title;
     this.createForm();
-
+    /*imagesFrom*/
     this.imageFrom.subscribe(r => this.myForm.get('imageUrl').setValue(r));
 
     setTimeout(() => {
+       /*imagesTo*/
       this.imageTo.next(this.o.imageUrl);
     }, 100);
   }
